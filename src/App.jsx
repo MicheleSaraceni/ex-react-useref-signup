@@ -1,25 +1,21 @@
-/* Milestone 1: Creare un Form con Campi Controllati
-1 - Crea un form di registrazione con i seguenti campi controllati (gestiti con useState):
+/* Milestone 2: Validare in tempo reale
+1 - Aggiungere la validazione in tempo reale dei seguenti campi:
 
-✅ Nome completo (input di testo)
+✅ Username: Deve contenere solo caratteri alfanumerici e almeno 6 caratteri (no spazi o simboli).
 
-✅ Username (input di testo)
+✅ Password: Deve contenere almeno 8 caratteri, 1 lettera, 1 numero e 1 simbolo.
 
-✅ Password (input di tipo password)
+✅ Descrizione: Deve contenere tra 100 e 1000 caratteri (senza spazi iniziali e finali).
 
-✅ Specializzazione (select con opzioni: "Full Stack", "Frontend", "Backend")
+Suggerimento: Per semplificare la validazione, puoi definire tre stringhe con i caratteri validi e usare .includes() per controllare se i caratteri appartengono a una di queste categorie:
 
-✅ Anni di esperienza (input di tipo number)
 
-✅ Breve descrizione sullo sviluppatore (textarea)
+const letters = "abcdefghijklmnopqrstuvwxyz";
+const numbers = "0123456789";
+const symbols = "!@#$%^&*()-_=+[]{}|;:'\\",.<>?/`~";
 
-2 - Aggiungi una validazione al submit, verificando che:
 
-Tutti i campi siano compilati
-L'input Anni di esperienza sia un numero positivo
-La Specializzazione sia selezionata
-
-3 - Al submit, se il form è valido, stampa in console i dati. */
+2 - Per ciascuno dei campi validati in tempo reale, mostrare un messaggio di errore (rosso) nel caso non siano validi, oppure un messaggio di conferma (verde) nel caso siano validi. */
 
 import { useState } from "react"
 
@@ -32,11 +28,36 @@ export default function App() {
   const [yearsExperience, setYearsExperience ] = useState(0);
   const [description, setDescription ] = useState("");
 
+  const letters = "abcdefghijklmnopqrstuvwxyz";
+  const numbers = "0123456789";
+  const symbols = `!@#$%^&*()-_=+[]{}|;:'",.<>?/~`;
+
+
   const submit = (e) => {
     e.preventDefault()
+
+    const lettersNumbers = letters + numbers;
+    const isAllLetters = username.toLowerCase().split('').every( (char) => lettersNumbers.includes(char) )
+    
+    const isValidPass = 
+    password.split('').some((char) => letters.includes(char.toLowerCase())) &&
+    password.split('').some((char) => numbers.includes(char)) && 
+    password.split('').some((char) => symbols.includes(char));
+
+    const startEndSpace = 
+    description.startsWith(' ') || 
+    description.endsWith(' ');
+
     if (yearsExperience < 0){
-      console.log("Gli anni di esperienza devono essere un numero positivo")
-    }else{console.log(name);
+      console.log( "Gli anni di esperienza devono essere un numero positivo" )
+    } else if ( !isAllLetters || username.length < 6 ){
+      console.log( "Username deve contenere solamente caratteri alfanumerici (abcdefghijklmnopqrstuvwxyz) e devono essere almeno 6" )
+    }  else if ( !isValidPass || password.length < 8 ){
+      console.log( `La password deve contenere almeno una lettera, un numero e un carattere speciale ( !@#$%^&*()-_=+[]{}|;:'",.<>?/~ )` )
+    } else if (description.length < 100 || description.length > 1000 || startEndSpace ){
+      console.log( `La descrizione deve avere minimo 100 e massimo 1000 caratteri e non deve iniziare o terminare con uno spazio` )
+    } else {
+      console.log(name);
     console.log(username);
     console.log(password);
     console.log(specialization);
