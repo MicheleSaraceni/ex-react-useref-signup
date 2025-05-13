@@ -32,29 +32,36 @@ export default function App() {
   const numbers = "0123456789";
   const symbols = `!@#$%^&*()-_=+[]{}|;:'",.<>?/~`;
 
+  const lettersNumbers = letters + numbers;
+  const isUsernameValid = 
+    username.toLowerCase().split('').every( (char) => lettersNumbers.includes(char) ) &&
+    username.length >= 6;
+    
+  const isPassValid = 
+    password.split('').some((char) => letters.includes(char.toLowerCase())) &&
+    password.split('').some((char) => numbers.includes(char)) && 
+    password.split('').some((char) => symbols.includes(char)) && 
+    password.length >= 8
+    ;
+
+  const isNotDescValid = 
+    description.length < 100 || 
+    description.length > 1000 ||
+    description.startsWith(' ') || 
+    description.endsWith(' ');
 
   const submit = (e) => {
     e.preventDefault()
 
-    const lettersNumbers = letters + numbers;
-    const isAllLetters = username.toLowerCase().split('').every( (char) => lettersNumbers.includes(char) )
     
-    const isValidPass = 
-    password.split('').some((char) => letters.includes(char.toLowerCase())) &&
-    password.split('').some((char) => numbers.includes(char)) && 
-    password.split('').some((char) => symbols.includes(char));
-
-    const startEndSpace = 
-    description.startsWith(' ') || 
-    description.endsWith(' ');
 
     if (yearsExperience < 0){
       console.log( "Gli anni di esperienza devono essere un numero positivo" )
-    } else if ( !isAllLetters || username.length < 6 ){
+    } else if ( !isUsernameValid ){
       console.log( "Username deve contenere solamente caratteri alfanumerici (abcdefghijklmnopqrstuvwxyz) e devono essere almeno 6" )
-    }  else if ( !isValidPass || password.length < 8 ){
-      console.log( `La password deve contenere almeno una lettera, un numero e un carattere speciale ( !@#$%^&*()-_=+[]{}|;:'",.<>?/~ )` )
-    } else if (description.length < 100 || description.length > 1000 || startEndSpace ){
+    }  else if ( !isPassValid ){
+      console.log( `La password deve contenere 8 caratteri con almeno una lettera, un numero e un carattere speciale ( !@#$%^&*()-_=+[]{}|;:'",.<>?/~ )` )
+    } else if ( isNotDescValid ){
       console.log( `La descrizione deve avere minimo 100 e massimo 1000 caratteri e non deve iniziare o terminare con uno spazio` )
     } else {
       console.log(name);
@@ -86,6 +93,9 @@ export default function App() {
       required
       onChange={(e)=>setUsername(e.target.value)}
       />
+      <p style={{color: isUsernameValid ? "Green" : "Red"}}>
+      {isUsernameValid ? "Username valido" : "Username non valida"}
+      </p>
       </section>
 
       <section>
@@ -96,6 +106,9 @@ export default function App() {
       required
       onChange={(e)=>setPassword(e.target.value)}
       />
+      <p style={{color: isPassValid ? "Green" : "Red"}}>
+      {isPassValid ? "Password valido" : "Password non valida"}
+      </p>
       </section>
 
       <section>
@@ -128,6 +141,9 @@ export default function App() {
         required
         onChange={(e)=>setDescription(e.target.value)}>
         </textarea>
+        <p style={{color: isNotDescValid ? "Red" : "Green"}}>
+        {isNotDescValid ? "Descrizione non valida" : "Descrizione valida"}
+      </p>
       </section>
 
       <button type="submit">Invia dati</button>
